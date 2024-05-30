@@ -2453,9 +2453,9 @@ async def forget(message: discord.Interaction):
 
 @bot.tree.command(description="LMAO TROLLED SO HARD :JOY:")
 async def fake(message: discord.Interaction):
-    file = discord.File("australian cat.png", filename="australian cat.png")
+    file = discord.File("cat.png", filename="cat.png")
     icon = get_emoji("egirlcat")
-    await message.channel.send(str(icon) + " eGirl cat hasn't appeared! Type \"cat\" to catch ratio!", file=file)
+    await message.channel.send(str(icon) + " eGirl cat hasn't appeared! Type \"cat\" to not catch it!", file=file)
     await message.response.send_message("OMG TROLLED SO HARD LMAOOOO 😂", ephemeral=True)
     await achemb(message, "trolled", "followup")
 
