@@ -1,4 +1,4 @@
-# Cat Bot CEu
+# Cat Bot Community Edition Unnoficial
 Discord Cat Bot CEu Source Code
 
 # Setup
