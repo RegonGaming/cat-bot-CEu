@@ -8,7 +8,6 @@ from random import randint, choice, shuffle, seed
 from PIL import Image
 from aiohttp import web
 from collections import UserDict
-from dotenv import load_dotenv
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -45,7 +44,6 @@ WHITELISTED_BOTS = [] # bots which are allowed to catch cats
 # if you dont know what that is or dont use it,
 # you can remove this line
 OWNER_ID = os.environ["OWNER_ID"]
-8
 ### Setup values end
 
 # trigger warning, base64 encoded for your convinience
