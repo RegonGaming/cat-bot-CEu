@@ -1,9 +1,9 @@
-import discord, msg2img, base64, sys, re, time, json, traceback, os, io, aiohttp, heapq, datetime, subprocess, asyncio, tarfile, server
+from dotenv.main import load_dotenv
+import discord, msg2img, base64, sys, re, time, json, traceback, os, io, aiohttp, heapq, datetime, subprocess, asyncio, tarfile, server, dotenv
 from discord.ext import tasks, commands
 from discord import ButtonStyle
 from discord.ui import Button, View
 from typing import Optional, Literal
-from dotenv import load_dotenv
 from random import randint, choice, shuffle, seed
 from PIL import Image
 from aiohttp import web
@@ -12,25 +12,25 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 load_dotenv()
-
 ### Setup values start
-GUILD_ID = os.environ['GUILD_ID'] # for emojis
-CATS_GUILD_ID = os.environ['CATS_GUILD_ID'] # alternative guild purely for cattype emojis (use for christmas/halloween etc), False to disable
-BACKUP_ID = os.environ['BACKUP_ID'] # channel id for db backups, private extremely recommended
 
-# discord bot token, use os.environ for more security
-TOKEN = os.environ['TOKEN']
+GUILD_ID = 1245782265804488736 # for emojis
+CATS_GUILD_ID = False # alternative guild purely for cattype emojis (use for christmas/halloween etc), False to disable
+BACKUP_ID = 1245783302258823269 # channel id for db backups, private extremely recommended
+
+# discord bot token, put you token into .env like this: token='your token'
+TOKEN = os.environ['token']
 
 # top.gg voting key
 # you can set it to false ig
-WEBHOOK_VERIFY = os.environ["WEBHOOK_VERIFY"]
+WEBHOOK_VERIFY = False
 
 # top.gg api token because they use ancient technology and you need to post server count manually smh
-TOP_GG_TOKEN = os.environ["TOP_GG_TOKEN"]
+TOP_GG_TOKEN = False
 
 # this will automatically restart the bot if message in GITHUB_CHANNEL_ID is sent, you can use a github webhook for that
 # set to False to disable
-GITHUB_CHANNEL_ID = os.environ["GITHUB_CHANNEL_ID"]
+GITHUB_CHANNEL_ID = False
 
 # whether you use pm2 for running it or not
 # that will just silently kill it on autoupdate and let pm2 restart it instead of manually restarting it
@@ -43,7 +43,8 @@ WHITELISTED_BOTS = [] # bots which are allowed to catch cats
 # use if bot is in a team
 # if you dont know what that is or dont use it,
 # you can remove this line
-OWNER_ID = os.environ["OWNER_ID"]
+OWNER_ID = 709785204318929017
+
 ### Setup values end
 
 # trigger warning, base64 encoded for your convinience
@@ -138,11 +139,11 @@ for e in CAT_TYPES:
     if e not in cattypes:
         cattypes.append(e)
 
-funny = ["why did you click this this arent yours", "absolutely not", "cat bot ceu not responding, try again later", "you cant", "can you please stop", "try again", "403 not allowed", "stop", "get a life", "not for you", "no", "nuh uh"]
+funny = ["why did you click this this arent yours", "absolutely not", "cat bot not responding, try again later", "you cant", "can you please stop", "try again", "403 not allowed", "stop", "get a life", "not for you", "no", "nuh uh"]
 
 summon_id = db["summon_ids"]
 
-regon = 0
+milenakoos = 0
 try:
     if not OWNER_ID:
         OWNER_ID = 0
@@ -157,7 +158,7 @@ update_queue = []
 # you can do 50 reactions before they stop, limit resets on global cat loop
 reactions_ratelimit = {}
 
-# cat bot ceu auto-claims in the channel user last ran /vote in
+# cat bot auto-claims in the channel user last ran /vote in
 # this is a failsafe to store the fact they voted until they ran that atleast once
 pending_votes = []
 
@@ -481,7 +482,7 @@ async def spawning_loop(times, ch_id):
 # some code which is run when bot is started
 @bot.event
 async def on_ready():
-    global regon, OWNER_ID, do_save_emojis, save_queue, on_ready_debounce, gen_credits
+    global milenakoos, OWNER_ID, do_save_emojis, save_queue, on_ready_debounce, gen_credits
     if on_ready_debounce:
         return
     on_ready_debounce = True
@@ -493,10 +494,10 @@ async def on_ready():
     )
     appinfo = await bot.application_info()
     if not OWNER_ID:
-        regon = appinfo.owner
-        OWNER_ID = regon.id
+        milenakoos = appinfo.owner
+        OWNER_ID = milenakoos.id
     else:
-        regon = await bot.fetch_user(OWNER_ID)
+        milenakoos = await bot.fetch_user(OWNER_ID)
 
     register_guild("spawn_times")
     register_guild("recovery_times")
@@ -1034,11 +1035,11 @@ async def help(message):
         inline=False
     ).add_field(
         name="Let's get funky!",
-        value="Cat Bot CEu has various other mechanics to make fun funnier. You can collect various `/achievements`, progress in the `/battlepass`, or have beef with the mafia over cataine addiction. The amount you worship is the limit!",
+        value="Cat Bot has various other mechanics to make fun funnier. You can collect various `/achievements`, progress in the `/battlepass`, or have beef with the mafia over cataine addiction. The amount you worship is the limit!",
         inline=False
     ).add_field(
         name="Other features",
-        value="Cat Bot CEu has extra fun commands which you will discover along the way.\nAnything unclear? Drop us a line at our [Discord server](https://discord.gg/staring).",
+        value="Cat Bot has extra fun commands which you will discover along the way.\nAnything unclear? Drop us a line at our [Discord server](https://discord.gg/staring).",
         inline=False
     ).set_footer(
         text=f"Cat Bot by Milenakos, {datetime.datetime.now().year}",
@@ -1051,7 +1052,7 @@ async def help(message):
 async def info(message: discord.Interaction):
     global gen_credits
     await message.response.defer()
-    embedVar = discord.Embed(title="Cat Bot CEu", color=0x6E593C, description="[Join support server](https://discord.gg/staring)\n[GitHub Page](https://github.com/milena-kos/cat-bot)\n\n" + \
+    embedVar = discord.Embed(title="Cat Bot", color=0x6E593C, description="[Join support server](https://discord.gg/staring)\n[GitHub Page](https://github.com/milena-kos/cat-bot)\n\n" + \
                              f"Bot made by {gen_credits['author']}\nWith contributions by {gen_credits['contrib']}.\n\nThis bot adds Cat Hunt to your server with many different types of cats for people to discover! People can see leaderboards and give cats to each other.\n\n" + \
                              f"Thanks to:\n**pathologicals** for the cat image\n**{gen_credits['emoji']}** for getting troh to add cat as an emoji\n**thecatapi.com** for random cats API\n**countik** for TikTok TTS API\n**{gen_credits['trash']}** for making cat, suggestions, and a lot more.\n\n**{gen_credits['tester']}** for being test monkeys\n\n**And everyone for the support!**")
 
@@ -1216,7 +1217,7 @@ async def changemessage(message: discord.Interaction):
                         return
                 icon = get_emoji("staring_cat")
                 await interaction.response.send_message("Success! Here is a preview:\n" + \
-                                                    input_value.format(emoji=icon, type="Example", username="Cat Bot CEu", count="1", time="69 years 420 days"))
+                                                    input_value.format(emoji=icon, type="Example", username="Cat Bot", count="1", time="69 years 420 days"))
             else:
                 await interaction.response.send_message("Reset to defaults.")
             db[str(message.guild.id)][self.type.lower()] = input_value
@@ -1873,8 +1874,8 @@ async def toggle_reminders(interaction):
     db["vote_remind"] = vote_remind
     save("vote_remind")
 
-if True==False:
-    @bot.tree.command(description="Vote for Cat Bot CEu for free cats")
+if WEBHOOK_VERIFY:
+    @bot.tree.command(description="Vote for Cat Bot for free cats")
     async def vote(message: discord.Interaction):
         await message.response.defer()
         try:
@@ -1911,7 +1912,7 @@ if True==False:
         button.callback = toggle_reminders
         view.add_item(button)
 
-        embedVar = discord.Embed(title="Vote for Cat Bot CEu", description=f"{weekend_message}Vote for Cat Bot Ceu on top.gg every 12 hours to recieve mystery cats.", color=0x6E593C)
+        embedVar = discord.Embed(title="Vote for Cat Bot", description=f"{weekend_message}Vote for Cat Bot on top.gg every 12 hours to recieve mystery cats.", color=0x6E593C)
         await message.followup.send(embed=embedVar, view=view)
 
 @bot.tree.command(description="Get a random cat")
@@ -2452,9 +2453,9 @@ async def forget(message: discord.Interaction):
 
 @bot.tree.command(description="LMAO TROLLED SO HARD :JOY:")
 async def fake(message: discord.Interaction):
-    file = discord.File("cat.png", filename="cat.png")
+    file = discord.File("australian cat.png", filename="australian cat.png")
     icon = get_emoji("egirlcat")
-    await message.channel.send(str(icon) + " eGirl cat hasn't appeared! Type \"cat\" to not catch it!", file=file)
+    await message.channel.send(str(icon) + " eGirl cat hasn't appeared! Type \"cat\" to catch ratio!", file=file)
     await message.response.send_message("OMG TROLLED SO HARD LMAOOOO 😂", ephemeral=True)
     await achemb(message, "trolled", "followup")
 
@@ -2539,12 +2540,12 @@ async def reset(message: discord.Interaction, person_id: discord.User):
         save(message.guild.id)
         await message.response.send_message(embed=discord.Embed(color=0x6E593C, description=f'Done! rip <@{person_id.id}>. f\'s in chat.'))
     except KeyError:
-        await message.response.send_message("ummm? this person isnt even registered in cat bot ceu wtf are you wiping?????", ephemeral=True)
+        await message.response.send_message("ummm? this person isnt even registered in cat bot wtf are you wiping?????", ephemeral=True)
 
-@bot.tree.command(description="(ADMIN) [VERY DANGEROUS] Reset all Cat Bot CEu data of this server")
+@bot.tree.command(description="(ADMIN) [VERY DANGEROUS] Reset all Cat Bot data of this server")
 @discord.app_commands.default_permissions(manage_guild=True)
 async def nuke(message: discord.Interaction):
-    warning_text = "⚠️ This will completely reset **all** Cat Bot CEu progress of **everyone** in this server. It will also reset some Cat Bot CEu settings (notably custom spawn messages). Following will not be affected: settuped channels, cats which arent yet cought, custom spawn timings.\nPress the button 5 times to continue."
+    warning_text = "⚠️ This will completely reset **all** Cat Bot progress of **everyone** in this server. It will also reset some Cat Bot settings (notably custom spawn messages). Following will not be affected: settuped channels, cats which arent yet cought, custom spawn timings.\nPress the button 5 times to continue."
     counter = 5
 
     async def gen(counter):
@@ -2582,7 +2583,7 @@ async def on_command_error(ctx, error):
         return bool(x in str(type(error)) or x in str(error))
 
     if ctx.guild == None:
-        await ctx.channel.send("hello good sir i would politely let you know cat bot ceu s no workey in dms please consider gettng the hell out of here")
+        await ctx.channel.send("hello good sir i would politely let you know cat bot is no workey in dms please consider gettng the hell out of here")
         return
 
     # ctx here is interaction
@@ -2627,7 +2628,7 @@ async def on_command_error(ctx, error):
 
     # if actually interesting crash, dm to bot owner
     if normal_crash:
-        await regon.send(
+        await milenakoos.send(
                 "There is an error happend:\n"
                 + str("".join(traceback.format_tb(error2))) + str(type(error).__name__) + str(error)
                 + "\n\nMessage guild: "
