@@ -63,13 +63,20 @@ type_dict = {
     "Rickroll": 125,
     "Reverse": 100,
     "Superior": 80,
+    "Cyber": 70,
+    "Angelic": 65,
+    "Wizard": 60,
+    "Celestial": 55,
     "TheTrashCell": 50,
+    "Crystal": 45,
     "Legendary": 35,
+    "Fluffy": 30,
     "Mythic": 25,
     "8bit": 20,
     "Corrupt": 15,
     "Professor": 10,
     "Divine": 8,
+    "Jeremy": 7,
     "Real": 5,
     "Ultimate": 3,
     "eGirl": 2
@@ -1152,8 +1159,8 @@ async def changetimings(message: discord.Interaction, minimum_time: Optional[int
         save("recovery_times")
         await message.response.send_message("Success! This channel is now reset back to usual spawning intervals.")
     elif minimum_time and maximum_time:
-        if minimum_time < 20:
-            await message.response.send_message("Sorry, but minimum time must be above 20 seconds.", ephemeral=True)
+        if minimum_time < 0:
+            await message.response.send_message("Sorry, but minimum time must be above 0 seconds.", ephemeral=True)
             return
         if maximum_time <= minimum_time:
             await message.response.send_message("Sorry, but minimum time must be less than maximum time.", ephemeral=True)
@@ -1487,8 +1494,11 @@ async def ping(message: discord.Interaction):
 
 @bot.tree.command(description="give cats now")
 @discord.app_commands.rename(cat_type="type")
-@discord.app_commands.describe(person="Whom to donate?", cat_type="Select a donate cat type", amount="And how much?")
-async def gift(message: discord.Interaction, person: discord.Member, cat_type: Literal[tuple(cattypes)], amount: Optional[int]):
+@discord.app_commands.describe(person="Whom to donate?", cat_type="Select a donate cat type. CASE-SENSITIVE!!1", amount="And how much?")
+async def gift(message: discord.Interaction, person: discord.Member, cat_type: str, amount: Optional[int]):
+    if cat_type not in type_dict:
+        await message.response.send_message("Invalid cat type. Please choose from actual options.")
+        return
     if not amount: amount = 1  # default the amount to 1
     person_id = person.id
 
@@ -2408,8 +2418,11 @@ async def leaderboards(message: discord.Interaction, leaderboard_type: Optional[
 @bot.tree.command(description="(ADMIN) Give cats to people")
 @discord.app_commands.default_permissions(manage_guild=True)
 @discord.app_commands.rename(person_id="user")
-@discord.app_commands.describe(person_id="who", amount="how many", cat_type="what")
-async def givecat(message: discord.Interaction, person_id: discord.Member, amount: int, cat_type: Literal[tuple(cattypes)]):
+@discord.app_commands.describe(person_id="who", amount="how many", cat_type="what. CASE-SENSITIVE!!1")
+async def givecat(message: discord.Interaction, person_id: discord.Member, amount: int, cat_type: str):
+    if cat_type not in type_dict:
+        await message.response.send_message("Invalid cat type. Please choose from actual options.")
+        return
     add_cat(message.guild.id, person_id.id, cat_type, amount)
     embed = discord.Embed(title="Success!", description=f"gave <@{person_id.id}> {amount} {cat_type} cats", color=0x6E593C)
     await message.response.send_message(embed=embed)
@@ -2452,10 +2465,14 @@ async def forget(message: discord.Interaction):
         await message.response.send_message("your an idiot there is literally no cat setupped in this channel you stupid")
 
 @bot.tree.command(description="LMAO TROLLED SO HARD :JOY:")
-async def fake(message: discord.Interaction):
-    file = discord.File("australian cat.png", filename="australian cat.png")
-    icon = get_emoji("egirlcat")
-    await message.channel.send(str(icon) + " eGirl cat hasn't appeared! Type \"cat\" to catch ratio!", file=file)
+@discord.app_commands.describe(cat_type="Select cat to fake spawn. CASE-SENSITIVE!!1")
+async def fake(message: discord.Interaction, cat_type: str):
+    if cat_type not in type_dict:
+        await message.response.send_message("Invalid cat type. Please choose from actual options.")
+        return
+    file = discord.File("cat.png", filename="cat.png")
+    icon = get_emoji(cat_type.lower() + 'cat')
+    await message.channel.send(str(icon) + " " + cat_type + " hasn't appeared! Type \"cat\" to not catch it!", file=file)
     await message.response.send_message("OMG TROLLED SO HARD LMAOOOO 😂", ephemeral=True)
     await achemb(message, "trolled", "followup")
 
@@ -2483,9 +2500,12 @@ async def soft_force(channeley, cat_type=None):
 
 @bot.tree.command(description="(ADMIN) Force cats to appear")
 @discord.app_commands.default_permissions(manage_guild=True)
-@discord.app_commands.rename(cat_type="type")
-@discord.app_commands.describe(cat_type="select a cat type ok")
-async def forcespawn(message: discord.Interaction, cat_type: Optional[Literal[tuple(cattypes)]]):
+@discord.app_commands.describe(cat_type="Select a cat type (optional). CASE-SENSITIVE!!1")
+async def forcespawn(message: discord.Interaction, cat_type: Optional[str] = None):
+    if cat_type and cat_type not in type_dict:
+        await message.response.send_message("Invalid cat type. Please choose from actual options.")
+        return
+
     try:
         if db["cat"][str(message.channel.id)]:
             await message.response.send_message("there is already a cat", ephemeral=True)
