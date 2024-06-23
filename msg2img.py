@@ -34,10 +34,10 @@ def msg2img(message, bot, sansgg=False):
             continue
 
         custom_image = Image.open(requests.get(i.url, stream=True).raw).convert("RGBA")
-        
+
         max_width = 930
         width, height = custom_image.size
-        
+
         if max_width >= width:
             # no rescaling needed
             calculated_height = height
@@ -48,7 +48,7 @@ def msg2img(message, bot, sansgg=False):
         calculated_height = int(height / decrease_amount)
 
         custom_image = custom_image.resize((max_width, calculated_height))
-        
+
         break
 
     def break_text(text, font, max_width):
@@ -143,7 +143,7 @@ def msg2img(message, bot, sansgg=False):
         new_url = "https://cdn.discordapp.com/avatars/966695034340663367/d9b60a653cb3c6f95baedf790723ce41.png?size=1024"
         pfp = requests.get(new_url, stream=True).raw
         im2 = Image.open(pfp).resize((800, 800)).convert("RGBA")  # resize user avatar
-    
+
     mask_im = Image.new("L", (800, 800), 0)  # make a mask image for making pfp circle
     draw = ImageDraw.Draw(mask_im)  # enable drawing mode on mask
     draw.ellipse((0, 0, 800, 800), fill=255)  # draw circle on mask
@@ -175,7 +175,7 @@ def msg2img(message, bot, sansgg=False):
             (
                 129 + getsize(font, nick)[0] + 5,
                 8 + 5,
-                129 + getsize(font, nick)[0] + 14 + getsize(botfont, "BOT")[0],
+                129 + getsize(font, nick)[0] + 14 + getsize(botfont, "APP")[0],
                 10 + 6 + 25,
             ),
             fill=(88, 101, 242),
@@ -184,12 +184,12 @@ def msg2img(message, bot, sansgg=False):
 
         pencil.text(
             (131 + getsize(font, nick)[0] + 8, 10 + 4),
-            "BOT",
+            "APP",
             font=botfont,
             fill=(255, 255, 255),
         )
-        move = getsize(botfont, "BOT")[0] + 20
-    
+        move = getsize(botfont, "APP")[0] + 20
+
     with Pilmoji(new_img) as pilmoji2:
         pilmoji2.text((122, 55), text.strip(), (255, 255, 255), font2, emoji_scale_factor=45/33)
 
@@ -218,4 +218,3 @@ def msg2img(message, bot, sansgg=False):
 # italic          https://discord.com/assets/7f18f1d5ab6ded7cf71bbc1f907ee3d4.woff2
 # bold            https://discord.com/assets/f9e7047f6447547781512ec4b977b2ab.woff2
 # bold and italic https://discord.com/assets/21070f52a8a6a61edef9785eaf303fb8.woff2
-

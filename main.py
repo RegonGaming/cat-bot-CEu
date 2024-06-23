@@ -76,10 +76,10 @@ type_dict = {
     "Corrupt": 15,
     "Professor": 10,
     "Divine": 8,
-    "Jeremy": 7,
     "Real": 5,
     "Ultimate": 3,
-    "eGirl": 2
+    "eGirl": 2,
+    "Jeremy": 1
 }
 
 # create a huge list where each cat type is multipled the needed amount of times
@@ -1409,6 +1409,10 @@ async def inventory(message: discord.Interaction, person_id: Optional[discord.Me
         if cat_num != 0:
             total += cat_num
             embedVar.add_field(name=f"{icon} {i}", value=cat_num, inline=True)
+            if cat_num == -69:
+                await achemb(message, "nicequestionmark", "followup")
+            if cat_num <= -100:
+                await achemb(message, "howdidwegethere", "followup")
             is_empty = False
         if cat_num <= 0:
             give_collector = False
@@ -2183,6 +2187,9 @@ async def achievements(message: discord.Interaction):
                     await dark_market(message)
                 else:
                     await light_market(message)
+            if hidden_counter == 20:
+                await achemb(message, "darkerestmarket", "followup")
+
         if category == "Cat Hunt":
             buttons_list.append(Button(label="Cat Hunt", style=ButtonStyle.green))
         else:
